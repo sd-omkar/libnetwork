@@ -442,6 +442,6 @@ func (epj *endpointJoinInfo) CopyTo(dstEpj *endpointJoinInfo) error {
 	dstEpj.driverTableEntries = make([]*tableEntry, len(epj.driverTableEntries))
 	copy(dstEpj.driverTableEntries, epj.driverTableEntries)
 	dstEpj.gw = types.GetIPCopy(epj.gw)
-	dstEpj.gw = types.GetIPCopy(epj.gw6)
+	dstEpj.gw6 = types.GetIPCopy(epj.gw6)
 	return nil
 }

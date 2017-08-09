@@ -10,7 +10,6 @@ import (
 	"sort"
 	"sync"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/docker/docker/pkg/stringid"
 	"github.com/docker/go-events"
 	"github.com/docker/libnetwork/cluster"
@@ -20,6 +19,7 @@ import (
 	"github.com/docker/libnetwork/networkdb"
 	"github.com/docker/libnetwork/types"
 	"github.com/gogo/protobuf/proto"
+	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -741,11 +741,12 @@ func (n *network) addDriverWatches() {
 			return
 		}
 
-		agent.networkDB.WalkTable(table.name, func(nid, key string, value []byte) bool {
-			if nid == n.ID() {
+		agent.networkDB.WalkTable(table.name, func(nid, key string, value []byte, deleted bool) bool {
+			// skip the entries that are mark for deletion, this is safe because this function is
+			// called at initialization time so there is no state to delete
+			if nid == n.ID() && !deleted {
 				d.EventNotify(driverapi.Create, nid, table.name, key, value)
 			}
-
 			return false
 		})
 	}
