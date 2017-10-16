@@ -329,13 +329,6 @@ func (d *dnetConnection) GetRemoteAddressList() []string {
 	return []string{d.Orchestration.Peer}
 }
 
-func (d *dnetConnection) GetNetworkKeys() []*types.EncryptionKey {
-	return nil
-}
-
-func (d *dnetConnection) SetNetworkKeys([]*types.EncryptionKey) {
-}
-
 func (d *dnetConnection) ListenClusterEvents() <-chan cluster.ConfigEventType {
 	return d.configEvent
 }
@@ -419,11 +412,7 @@ func startTestDriver() error {
 		return err
 	}
 
-	if err := ioutil.WriteFile("/etc/docker/plugins/test.spec", []byte(server.URL), 0644); err != nil {
-		return err
-	}
-
-	return nil
+	return ioutil.WriteFile("/etc/docker/plugins/test.spec", []byte(server.URL), 0644)
 }
 
 func newDnetConnection(val string) (*dnetConnection, error) {

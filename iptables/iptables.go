@@ -313,11 +313,7 @@ func (c *ChainInfo) Forward(action Action, ip net.IP, port int, proto, destAddr 
 		"--dport", strconv.Itoa(destPort),
 		"-j", "MASQUERADE",
 	}
-	if err := iptable.ProgramRule(Nat, "POSTROUTING", action, args); err != nil {
-		return err
-	}
-
-	return nil
+	return iptable.ProgramRule(Nat, "POSTROUTING", action, args)
 }
 
 // Link adds reciprocal ACCEPT rule for two supplied IP addresses.
@@ -340,10 +336,7 @@ func (c *ChainInfo) Link(action Action, ip1, ip2 net.IP, port int, proto string,
 	// reverse
 	args[7], args[9] = args[9], args[7]
 	args[10] = "--sport"
-	if err := iptable.ProgramRule(Filter, c.Name, action, args); err != nil {
-		return err
-	}
-	return nil
+	return iptable.ProgramRule(Filter, c.Name, action, args)
 }
 
 // ProgramRule adds the rule specified by args only if the
@@ -514,7 +507,7 @@ func (iptable IPTable) RawCombinedOutputNative(args ...string) error {
 
 // ExistChain checks if a chain exists
 func (iptable IPTable) ExistChain(chain string, table Table) bool {
-	if _, err := iptable.Raw("-t", string(table), "-L", chain); err == nil {
+	if _, err := iptable.Raw("-t", string(table), "-nL", chain); err == nil {
 		return true
 	}
 	return false
